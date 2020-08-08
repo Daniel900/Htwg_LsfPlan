@@ -53,6 +53,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hstrobel.lsfplan.gui.MainActivity" />
         </activity>
+        <activity
+            android:name=".gui.grades.Grades"
+            android:label="@string/action_grades"
+            android:parentActivityName=".gui.MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hstrobel.lsfplan.gui.MainActivity" />
+        </activity>
 
         <receiver android:name=".model.AlarmReceiver" />
         <receiver

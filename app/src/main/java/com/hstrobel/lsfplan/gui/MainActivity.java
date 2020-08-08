@@ -11,11 +11,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.hstrobel.lsfplan.Constants;
 import com.hstrobel.lsfplan.GlobalState;
 import com.hstrobel.lsfplan.R;
 import com.hstrobel.lsfplan.gui.download.NativeSelector;
 import com.hstrobel.lsfplan.gui.download.WebviewSelector;
 import com.hstrobel.lsfplan.gui.eventlist.MainListFragment;
+import com.hstrobel.lsfplan.gui.grades.Grades;
 import com.hstrobel.lsfplan.gui.settings.UserSettings;
 import com.hstrobel.lsfplan.model.NotificationUtils;
 import com.hstrobel.lsfplan.model.calender.CalenderUtils;
@@ -99,6 +101,13 @@ public class MainActivity extends AppCompatActivity implements IOpenDownloader {
         } else if (id == R.id.action_reset) {
             if (listFragment != null) {
                 listFragment.onDateReset();
+            }
+        } else if (id == R.id.action_showGrades) {
+            if(state.getCollege() == Constants.MODE_HTWG) {
+                Intent intent = new Intent(this, Grades.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(getApplicationContext(), "Just working for the HTWG", Toast.LENGTH_LONG).show();
             }
         }
 

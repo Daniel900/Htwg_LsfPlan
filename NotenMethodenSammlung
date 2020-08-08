@@ -1,0 +1,149 @@
+//NativeSelector.java
+//showLoginForm() as login
+
+public class PlanOverviewLoader extends AsyncTask<String, String, List<CourseGroup>> {
+    @Override
+    protected List<CourseGroup> doInBackground(String... params) {
+        // Making HTTP request
+        List<CourseGroup> list = new LinkedList<>();
+        CourseGroup group;
+        CourseGroup.Course item;
+
+        try {
+            Connection connection = Utils.setupAppConnection(params[0], getApplicationContext());
+            Document doc = connection.get();
+
+            Elements tableRows = doc.select("tr");
+            for (Element row : tableRows) {
+                if (row.children().size() != 3) continue; //skip head row
+                Elements columns = row.children();
+
+                //course name
+                Element courseURL = columns.get(0).child(0); //row 0 --> a class --> inner text
+                if (BuildConfig.DEBUG) Log.d(TAG, courseURL.text());
+                group = new CourseGroup(courseURL.text());
+
+                //course semesters
+                for (Element ele : columns.get(1).children()) {
+                    if (!ele.tagName().equals("a")) continue;
+                    if (BuildConfig.DEBUG)
+                        Log.d(TAG, String.format("%s : %s", ele.text(), ele.attr("href")));
+                    item = new CourseGroup.Course(ele.text(), ele.attr("href"));
+                    group.items.add(item);
+                }
+                //course everthing
+                Element allURL = columns.get(2).child(0); //row 0 --> a class --> inner text
+                if (BuildConfig.DEBUG)
+                    Log.d(TAG, String.format("%s : %s", allURL.text(), allURL.attr("href")));
+                item = new CourseGroup.Course(allURL.text(), allURL.attr("href"));
+                group.items.add(item);
+
+                list.add(group);
+            }
+
+        } catch (Exception ex) {
+            Log.e(TAG, "FAIL DL: ", ex);
+            list = null;
+        }
+
+        return list;
+    }
+
+    @Override
+    protected void onPostExecute(List<CourseGroup> result) {
+        super.onPostExecute(result);
+        overviewCallback(result);
+    }
+}
+
+//exctract the export ics url
+public class PlanExportLoader extends AsyncTask<String, String, String> {
+    @Override
+    protected String doInBackground(String... params) {
+        // Making HTTP request
+        String url = null;
+        try {
+            Connection con = Utils.setupAppConnection(params[0], getApplicationContext());
+            if (params.length > 1) {
+                con.cookie("JSESSIONID", params[1]);
+            }
+            Document doc = con.get();
+
+
+            Elements images = doc.select("img");
+            for (Element imgs : images) {
+                if (imgs.hasAttr("src")) {
+                    if (imgs.attr("src").equals("/QIS/images//calendar_go.gif")) {
+                        //found export/target ics file ;)
+                        Log.d(TAG, imgs.parent().attr("href"));
+                        url = imgs.parent().attr("href");
+                        break;
+                    }
+                }
+            }
+            if (url == null) {
+                Log.e(TAG, "Export URL not found! " + doc.text());
+            }
+
+
+        } catch (Exception ex) {
+            Log.e(TAG, "FAIL DL: ", ex);
+            url = null;
+        }
+        return url;
+    }
+
+
+
+//Complete LoginProcess.java
+    @Override
+    protected String doInBackground(String... params) {
+        try {
+            String user = params[0];
+            String pw = params[1];
+
+
+            String url = Utils.getLoginUrl(context, GlobalState.getInstance().getCollege());
+            Connection connection = Utils.setupAppConnection(url, context)
+                    .data("asdf", user)
+                    .data("fdsa", pw)
+                    .data("submit", "Anmelden")
+                    .timeout(30000);
+            connection.post();
+            Connection.Response response = connection.response();
+            Log.d(TAG, String.valueOf(response.method()));
+
+            //get is successfull because it will redirect. if it fails we get a modified post response.
+            if (response.method() == Connection.Method.GET) {
+                //yay
+                for (String key : response.cookies().keySet()) {
+                    Log.d("LSF", String.format("%s : %s", key, response.cookie(key)));
+                    if (key.equals("JSESSIONID")) {
+                        return response.cookie(key);
+                    }
+                }
+            }
+
+            return null;
+
+        } catch (Exception ex) {
+            Log.e(TAG, "Login failed ", ex);
+        }
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+        super.onPostExecute(result);
+        context.loginCallback(result);
+    }
+
+
+    //Utils
+    public static String getLoginUrl(Context c, int mode) {
+        return getBaseUrl(c, mode) + c.getString(R.string.misc_personalLoginURL);
+    }
+
+    public static String getPersonalPlanUrl(Context c, int mode) {
+        return getBaseUrl(c, mode) + c.getString(R.string.misc_personalPlanURL);
+    }

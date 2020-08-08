@@ -68,6 +68,24 @@ public class Utils {
     public static String getCoursesOverviewUrl(Context c, int mode) {
         return getBaseUrl(c, mode) + c.getString(R.string.misc_coursesOverviewURL);
     }
+    //Grades
+    private static String getBaseUrlGrades(Context c, int mode) {
+        if (mode == Constants.MODE_HTWG) {
+            return c.getString(R.string.misc_qisserverURL_HTWG);
+        } else if (mode == Constants.MODE_UNI_KN) {
+            return "";
+        }
+        return "";
+    }
+    public static String getLoginUrlGrades(Context c, int mode) {
+        return getBaseUrlGrades(c, mode) + c.getString(R.string.misc_qisserverLoginURL);
+    }
+    public static String getPruefungsverwaltungURL(Context c, int mode) {
+        return getBaseUrlGrades(c, mode) + c.getString(R.string.misc_qisserverPruefungsverwaltungURL);
+    }
+    public static String getNotenspiegelNoASIURL(Context c, int mode) {
+        return getBaseUrlGrades(c, mode) + c.getString(R.string.misc_qisserverNotenspiegelNoASI);
+    }
 
     public static Connection setupAppConnection(String url, Context c) {
         return Jsoup.connect(url)
