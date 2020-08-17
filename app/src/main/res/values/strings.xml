@@ -108,7 +108,7 @@
     <string name="misc_qisserverURL_HTWG" translatable="false"><![CDATA[https://qisserver.htwg-konstanz.de]]></string>
     <string name="misc_qisserverLoginURL" translatable="false"><![CDATA[/qisserver/rds?state=user&type=1&category=auth.login&startpage=portal.vm]]></string>
     <string name="misc_qisserverPruefungsverwaltungURL" translatable="false"><![CDATA[/qisserver/rds?state=change&type=1&moduleParameter=studyPOSMenu&nextdir=change&next=menu.vm&subdir=applications&xml=menu&purge=y&navigationPosition=functions%2CstudyPOSMenu&breadcrumb=studyPOSMenu&topitem=loggedin&subitem=studyPOSMenu]]></string>
-    <string name="misc_qisserverNotenspiegelNoASI" translatable="false"><![CDATA[/qisserver/rds?state=notenspiegelStudent&next=tree.vm&nextdir=qispos/notenspiegel/student&menuid=notenspiegelStudent&breadcrumb=notenspiegel&breadCrumbSource=menu&asi=]]></string>
+    <string name="misc_qisserverNotenspiegelNoASI" translatable="false"><![CDATA[/qisserver/rds?state=htmlbesch&asi=]]></string>
     <string name="action_grades">Grades</string>
     <string name="title_grades">Grades</string>
 
